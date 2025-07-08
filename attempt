@@ -1,67 +1,74 @@
 import pygame
 import random
-import time
+
 pygame.init()
 
-# Constant Value to control the UI
-running = True
+# Constants
+WIDTH, HEIGHT = 800, 500
+WHITE = (255, 255, 255)
+clock = pygame.time.Clock()
+font = pygame.font.Font(None, 36)
+numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 
+# Screen setup
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Slot Machine")
 
-# Set of values
-height = 800
-width = 500
-white = (255, 255, 255)
+# Slot Class
+class Slot:
+    def __init__(self, x, y, w, h):
+        self.rect = pygame.Rect(x, y, w, h)
+        self.symbol = "?"  # Default
+        self.color = (0, 0, 0)
 
-
-# Create a screen with the given height and width
-screen = pygame.display.set_mode((height,width))
-
-
-# Create classes
-class slot():
-    def __init__(self, x, y, h, w):
-        self.rect = pygame.Rect(x, y, h, w)
-
-    def draw(self,surf,color):
-        pygame.draw.rect(surf, color, self.rect)
+    def draw(self, surf, font, color):
+        pygame.draw.rect(surf, color, self.rect, 3)
+        text = font.render(self.symbol, True, color)
+        text_rect = text.get_rect(center=self.rect.center)
+        surf.blit(text, text_rect)
 
     def roll(self):
-        pass # Placeholder for rolling logic
+        self.symbol = random.choice(numbers)
 
-class spin():
-    def __init__(self,x,y,h,w):
-        self.rect = pygame.Rect(x, y, h, w)
+# Spin Button Class
+class Spin:
+    def __init__(self, x, y, w, h):
+        self.rect = pygame.Rect(x, y, w, h)
         self.clicked = False
-    
-    def draw(self, surf, col):
-        pygame.draw.rect(surf, col, self.rect)
+
+    def draw(self, surf, font, col, hover_col, text="Spin"):
         pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] and not self.clicked:
-                self.clicked = True
-                print("Spin button clicked at", pos)
-            if not pygame.mouse.get_pressed()[0]:
-                self.clicked = False
+        is_hover = self.rect.collidepoint(pos)
+        pygame.draw.rect(surf, hover_col if is_hover else col, self.rect)
+        text_surf = font.render(text, True, (0, 0, 0))
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        surf.blit(text_surf, text_rect)
 
+    def is_clicked(self, event):
+        return event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos)
 
+# Create instances OUTSIDE the loop
+slot1 = Slot(100, 100, 100, 100)
+spin_button = Spin(300, 350, 200, 75)
+
+# Main loop
+running = True
 while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
+    screen.fill(WHITE)
+
+    # Event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill(white)
+        if spin_button.is_clicked(event):
+            slot1.roll()
 
-    # Create slots, handle slot logics and functions here
-    slot1 = slot(100, 100, 100, 200)
-    slot1.draw(screen, (219,165,255))  
+    # Draw slot and button
+    slot1.draw(screen, font, (0, 0, 0))
+    spin_button.draw(screen, font, (255, 223, 0), (255, 165, 0))
 
-    # Create spin button, handle spin button logics and functions here
-    spin1 = spin(300,350, 200, 75)
-    spin1.draw(screen, (255,223,0))
-    # flip() the display to put your work on screen
-    pygame.display.flip()
-    
+    pygame.display.update()
+    clock.tick(60)
+
 pygame.quit()
