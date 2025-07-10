@@ -45,10 +45,14 @@ class Spin:
         surf.blit(text_surf, text_rect)
 
     def is_clicked(self, event):
-        return event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos)
+        return (
+        event.type == pygame.MOUSEBUTTONDOWN
+        and event.button == 1  # Only left mouse button
+        and self.rect.collidepoint(event.pos)
+    )
 
 # Create instances OUTSIDE the loop
-slot1 = Slot(100, 100, 100, 100)
+slot1 = Slot(200, 100, 100, 200)
 spin_button = Spin(300, 350, 200, 75)
 
 # Main loop
