@@ -4,6 +4,7 @@ import random
 pygame.init()
 
 # Constants
+# --------------------------------------------------
 WIDTH, HEIGHT = 800, 500
 WHITE = (255, 255, 255)
 clock = pygame.time.Clock()
@@ -53,6 +54,8 @@ class Spin:
 
 # Create instances OUTSIDE the loop
 slot1 = Slot(200, 100, 100, 200)
+slot2 = Slot(350, 100, 100, 200)
+slot3 = Slot(500, 100, 100, 200)
 spin_button = Spin(300, 350, 200, 75)
 
 # Main loop
@@ -67,9 +70,13 @@ while running:
 
         if spin_button.is_clicked(event):
             slot1.roll()
+            slot2.roll()
+            slot3.roll()
 
     # Draw slot and button
     slot1.draw(screen, font, (0, 0, 0))
+    slot2.draw(screen, font, (0, 0, 0))
+    slot3.draw(screen, font, (0, 0, 0))
     spin_button.draw(screen, font, (255, 223, 0), (255, 165, 0))
 
     pygame.display.update()
